@@ -209,6 +209,52 @@ app.get("/movies-app/popular-movies",verifyToken, async (req, res) => {
   }
 });
 
+
+app.post("/check-email", async (req, res) => {
+  try {
+    const { userEmail } = req.body;
+    console.log("Incoming email:", userEmail);
+
+    // Validate input
+    if (!userEmail) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Email is required" 
+      });
+    }
+
+    const user = await UserModel.findOne({ email: userEmail }).lean();
+    console.log("Matched user:", user);
+
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "User with this email does not exist" 
+      });
+    }
+
+    return res.status(200).json({ 
+      success: true, 
+      message: "OTP sent to registered mail", 
+      user: {
+        username: user.username,
+        email: user.email,
+        userId: user.userId
+      } 
+    });
+
+  } catch (err) {
+    console.error("Error checking email:", err);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Server error while checking email", 
+      error: err.message 
+    });
+  }
+});
+
+
+
 app.get("/movies-app/movies/:movieId",verifyToken, async (req, res) => {
   const movieId = req.params.movieId;
   try {
@@ -260,6 +306,50 @@ app.get("/profile",verifyToken,async(req,res)=> {
 })
 
 
+app.put("/updatepassword", async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    // Input validation
+    if (!email || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and new password are required",
+      });
+    }
+
+    // Find user by email
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found with this email",
+      });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password in DB
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+    });
+
+  } catch (err) {
+    console.error("Error updating password:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while updating password",
+      error: err.message,
+    });
+  }
+});
+
+
 // Global JSON error handler
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
@@ -269,6 +359,11 @@ app.use((err, req, res, next) => {
     error: process.env.NODE_ENV === "production" ? undefined : String(err.stack || err),
   });
 });
+
+
+app.get("/",async(req,res)=> {
+  res.send("hello")
+})
 
 
 // ---------------- MONGODB CONNECTION ----------------

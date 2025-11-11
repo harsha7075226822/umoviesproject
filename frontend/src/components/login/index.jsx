@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { Link, Navigate, useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
@@ -11,6 +11,18 @@ const Login = () => {
     const [showErrorMsg,setShowErrMsg] = useState('')
     const [isErr,setIsErr] = useState(false)
 
+    // API base: use env in prod; fallback to current Render API
+    const API_BASE = import.meta.env?.VITE_API_BASE_URL || "https://umoviesproject.onrender.com";
+
+    // Pre-warm backend (helps with cold starts on Render)
+    useEffect(() => {
+      const controller = new AbortController();
+      fetch(`${API_BASE}/`, { method: "GET", signal: controller.signal, cache: "no-store" })
+        .catch(() => {});
+      return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
 
     const handleUseremail = (e) =>{
         setEmail(e.target.value)
@@ -18,6 +30,11 @@ const Login = () => {
 
     const handlePassword = (e) =>{
         setPassword(e.target.value)
+    }
+
+    const handleOtpNavigate = () => {
+      console.log("hello")
+      navigate("/forgotpassword",{replace:true})
     }
 
     const onSubmitSuccess = (jwtToken) => {
@@ -35,22 +52,33 @@ const Login = () => {
     const handleSubmitForm=async(event) =>{
         event.preventDefault();
         const userDetails = {email,password}
-        const apiUrl = "https://umoviesproject.onrender.com/login";
-        const options = {
-          method:"POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userDetails)
+        const apiUrl = `${API_BASE}/login`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+        try {
+          const options = {
+            method:"POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userDetails),
+            signal: controller.signal,
+            cache: "no-store",
+          }
+          const response = await fetch(apiUrl,options);
+          const data = await response.json()
+          if (response.ok===true) {
+            onSubmitSuccess(data.jwt_token)
+          }
+          else {
+            onSubmitFailure(data.message || "Login failed");
+          }
+        } catch (err) {
+          onSubmitFailure("Network error, please try again");
+          console.log(err)
+        } finally {
+          clearTimeout(timeoutId);
         }
-        const response = await fetch(apiUrl,options);
-        const data = await response.json()
-        if (response.ok===true) {
-          onSubmitSuccess(data.jwt_token)
-        }
-        else {
-          onSubmitFailure(data.message);
-        }    
     }
 
     const jwtToken = Cookies.get("jwt_token")
@@ -103,7 +131,7 @@ const Login = () => {
             />
             
           </div>
-          {isErr ? <p className="text-red-500 text-sm">{showErrorMsg}</p> : '' }
+          {isErr ? <p className="text-red-500 text-sm">{showErrorMsg} | <span onClick={handleOtpNavigate} className="cursor-pointer">forgotPassword ?</span> </p> : '' }
           {/* Submit Button */}
           <button
             type="submit"
@@ -111,7 +139,7 @@ const Login = () => {
           >
             Login
           </button>
-          <p className="text-white pt-2">Already have an Account ? <Link to={"/register"} className="underline">Register</Link></p>
+          <p className="text-white pt-2">Not have an Account ? <Link to={"/register"} className="underline">Register</Link></p>
         </form>
       </div>
     </div>

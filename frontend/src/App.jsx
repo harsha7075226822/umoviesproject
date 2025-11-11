@@ -10,7 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import SearchMovie from './components/SearchMovies'
 import Login from './components/login'
 import Register from './components/signup/Register'
-// import Register from './components/signup/Register'
+import OtpGeneration from './components/otpGeneration'
 
 
 function App() {
@@ -38,6 +38,10 @@ function App() {
         <Route
           path="/movies-app/movies-search"
           element={<ProtectedRoute><SearchMovie /></ProtectedRoute>}
+        />
+        <Route
+          path="/forgotpassword"
+          element={<OtpGeneration />}
         />
         <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
         <Route path='/login' element={<Login />} />
