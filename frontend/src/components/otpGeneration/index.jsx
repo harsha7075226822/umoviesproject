@@ -25,7 +25,7 @@ function OtpGeneration() {
   // 🔹 Handle Send OTP
   const handleSendOtp = async () => {
     const userDetails = { userEmail }
-    const apiUrl = 'http://localhost:7899/check-email'
+    const apiUrl = 'https://umoviesproject.onrender.com/check-email'
     const options = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
