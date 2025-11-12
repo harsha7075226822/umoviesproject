@@ -47,7 +47,7 @@ function MovieItemDetails() {
           genres: movieDetails.genres,
           spokenLanguages: movieDetails.spoken_languages,
           similarMovies: movieDetails.similar_movies,
-          movieLink : movieDetails.movieLink
+          movieUrl : movieDetails.movieUrl
         }
         setUniqueMovie(formattedMovieDetails)
         setGenres(formattedMovieDetails.genres)
@@ -60,7 +60,8 @@ function MovieItemDetails() {
   }, [movieId, jwtToken])
 
   const handleMovieVideo = () => {
-    window.open(uniqueMovie.movieLink)
+    // console.log(uniqueMovie.movieLink)
+    window.open(uniqueMovie.movieUrl)
   }
 
   return (
