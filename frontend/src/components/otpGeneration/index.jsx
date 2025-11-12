@@ -134,7 +134,7 @@ function OtpGeneration() {
     event.preventDefault()
 
     const userDetails = { email: userEmail, newPassword: newPass }
-    const apiUrl = 'http://localhost:7899/updatepassword'
+    const apiUrl = 'https://umoviesproject.onrender.com/updatepassword'
     const options = {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
