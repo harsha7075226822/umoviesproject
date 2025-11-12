@@ -100,7 +100,7 @@ function MovieItemDetails() {
                   <div className='mt-1'>
                     <FaPlay />
                   </div>
-                  <span className='ml-2'>Play</span>
+                  <span className='ml-2'>Watch Trailer</span>
                 </div>
               </button>
             </div>
