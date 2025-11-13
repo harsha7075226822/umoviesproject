@@ -50,10 +50,10 @@ function AccountPage() {
   return (
     <div>{ dataCame ? 
       <div>
-        <div className='bg-black h-[60px] sm:h-[76px]'>
+        <div className='bg-black h-[65px] sm:h-[76px]'>
           <NavbarPage />
         </div>
-        <div className="flex justify-center items-center min-h-[70vh] bg-black px-4 sm:px-6">
+        <div className="flex justify-center items-center min-h-screen bg-black px-4 sm:px-6">
           <div className="w-full max-w-2xl bg-white p-6 sm:p-8">
             <h1 className="text-xl sm:text-2xl font-bold mb-6">Account</h1>
 

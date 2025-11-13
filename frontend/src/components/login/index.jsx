@@ -108,7 +108,7 @@ const Login = () => {
             />
             
           </div>
-          {isErr ? <p className="text-red-500 text-sm">{showErrorMsg} | <span onClick={handleOtpNavigate} className="cursor-pointer">forgotPassword ?</span> </p> : '' }
+          {isErr ? <p className="text-red-500 text-sm">{showErrorMsg} | <span onClick={handleOtpNavigate} className="cursor-pointer text-white">forgotPassword ?</span> </p> : '' }
           {/* Submit Button */}
           <button
             type="submit"
